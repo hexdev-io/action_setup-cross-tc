@@ -3,4 +3,4 @@ description: 'Setup cross compiler toolchain.'
 author: 'Czwl Cd'
 runs:
   using: 'node12'
-  main: 'dist/index.cjs'
+  main: 'wrapper.cjs'

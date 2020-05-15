@@ -6,65 +6,31 @@ on:
       - master
 
 jobs:
-  build:
-   runs-on: ubuntu-latest
-   steps:
-    - uses: actions/checkout@v2
-    - name: Setup install.
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - name: Cache node modules
-      uses: actions/cache@v1
-      env:
-        cache-name: cache-node-modules
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-
-    - name: Install Dependencies
-      run: npm install
-   
-    - name: Lint code
-      run: npm run lint
-
-    - name: Start build 
-      run: npm run build
-   
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v1
-      with:
-          name: dist
-          path: dist/
 
   test:
     runs-on: ubuntu-latest
-    needs: build
+
     steps:
       - uses: actions/checkout@v2
         with: 
           fetch-depth: 0  
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: dist
-
       - uses: actions/cache@v1
+        id: cache-toolchains
         with:
           path: ~/toolchains
-          key: ${{ runner.os }}-tc
-          restore-keys: |
-             ${{ runner.os }}-tc-
+          key: ${{ runner.os }}-cross-tc
 
-      - name: Run the action  
+      - name: Clean previous run artifacts
+        run : rm -rf ~/toolchains
+
+      - name: Install cross compiler depedencies
         env: 
           LOG_DEBUG: 1
         uses: ./
+
+      - name: Setup cross compiler toolchains
+        run:  python3 ~/toolchains/._toolchain.py
 
       - name: Check toolchains PATH
         env :
@@ -72,34 +38,41 @@ jobs:
         run: echo "$PATH"
 
   test_cache:
+    name : Caching test
     runs-on: ubuntu-latest
     needs: test
     steps:
       - uses: actions/checkout@v2
-        with: 
-          fetch-depth: 0  
           
-      - name: Download artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: dist
-
       - uses: actions/cache@v1
+        id: cache-toolchains
         with:
           path: ~/toolchains
-          key: ${{ runner.os }}-tc
-          restore-keys: |
-             ${{ runner.os }}-tc-
+          key: ${{ runner.os }}-cross-tc
 
-      - name: Run the action  
+      - name: Install cross compiler depedencies
         env: 
           LOG_DEBUG: 1
         uses: ./
+      
+      - name: Setup cross compiler toolchains
+        run:  python3 ~/toolchains/._toolchain.py
+        env: 
+          CACHED_SETUP_TOOLCHAINS: ${{steps.cache-toolchains.outputs.cache-hit}}
 
       - name: Check toolchains PATH
         env :
           LOG_DEBUG: 1
         run: echo "$PATH"
+
+  publish_action:
+    name : Publish
+    runs-on: ubuntu-latest
+    needs: test_cache
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          fetch-depth: 0  
 
       - name: Commit Release
         env:

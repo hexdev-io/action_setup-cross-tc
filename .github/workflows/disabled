@@ -1,0 +1,46 @@
+  build:
+   runs-on: ubuntu-latest
+   steps:
+    - uses: actions/checkout@v2
+    - name: Setup install.
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Cache node modules
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: Install Dependencies
+      run: npm install
+   
+    - name: Lint code
+      run: npm run lint
+
+    - name: Start build 
+      run: npm run build
+   
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v1
+      with:
+          name: dist
+          path: dist/
+
+    needs: build
+
+                - name: Download artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: dist
+
+                - name: Download artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: dist
