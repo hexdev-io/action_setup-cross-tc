@@ -1,0 +1,10 @@
+- name: gcc-aarch64-none-linux-gnu
+  version: 9.2-2019.12
+  release: gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu
+  url: https://github.com/phayes/geoPHP/tarball/master
+  extract: xJ
+- name: gcc-arm-none-linux-gnueabihf
+  version: 9.2-2019.12
+  release: gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf
+  url: https://github.com/phayes/geoPHP/tarball/master
+  extract: xJ
