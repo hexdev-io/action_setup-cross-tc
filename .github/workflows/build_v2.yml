@@ -1,0 +1,90 @@
+name: Build
+
+on: 
+  push:
+    branches:
+      - master
+
+jobs:
+  build_test:
+   runs-on: ubuntu-latest
+   steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup install.
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12
+
+    - name: Cache node modules
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+
+    - name: Install Dependencies
+      run: npm install
+   
+    - name: Lint code
+      run: npm run lint
+
+    - name: Start build 
+      run: npm run build
+   
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path : dist/
+      
+    - uses: actions/cache@v1
+      with:
+        path: ~/toolchains
+        key: ${{ runner.os }}-tc
+        restore-keys: |
+          ${{ runner.os }}-tc-
+
+    - name: Clean previous run artifacts
+      run : rm -rf ~/toolchains
+
+    - name: Run the action  
+      uses: ./
+      env: 
+        LOG_DEBUG: 1
+
+    - name: Check toolchains PATH
+      env :
+        LOG_DEBUG: 1
+      run: echo "$PATH"
+
+  publish_action:
+    name : Publish
+    runs-on: ubuntu-latest
+    needs: build_test
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          fetch-depth: 0  
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+
+      - name: Commit Release
+        env:
+         DIST_BRANCH: v2
+        run: .github/commit-release.sh ${DIST_BRANCH}
+      
+      # We're force pushing the changes until we move to stable release
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: v2
+          force: true  
+          github_token: ${{ secrets.GITHUB_TOKEN }}
