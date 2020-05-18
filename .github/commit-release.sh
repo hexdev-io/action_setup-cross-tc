@@ -7,15 +7,21 @@ git config --local user.name "CI: hex-dev"
 
 printf "ENV: \n"
 
-ls .
-ls ..
+pwd
+ls -l .
+
+printf -v res %20s
+printf '%s\n' "${res// /-}"
+
+printf "> Parent: \n"
+ls -l ..
 
 if git checkout -b "${DIST_BRANCH}" origin/"${DIST_BRANCH}" 2>/dev/null; then
 	printf "Pre: State \n"
 	git status
 else
 	git checkout --orphan "${DIST_BRANCH}"
-	git rm --staged -rf .
+	git rm --staged -rf 
 fi
 echo "node_modules" >.gitignore
 git add .gitignore dist/
