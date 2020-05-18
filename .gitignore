@@ -1,3 +1,10 @@
 node_modules
 out/**
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+dist/
+lib/
+*.xz

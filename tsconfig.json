@@ -1,0 +1,19 @@
+{
+ 
+  "compilerOptions": {
+    "baseUrl": ".",
+    "moduleResolution": "node",
+    "target" : "esnext",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "types": [  "jest","node"],
+    "paths": {
+    "*.ts": ["*"]
+    }
+  },
+  "include": [
+    "./src"
+  ]
+  ,
+  "exclude": ["node_modules", "**/*.test.ts"]
+}

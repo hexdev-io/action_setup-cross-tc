@@ -3,4 +3,10 @@ description: 'Setup cross compiler toolchain.'
 author: 'Czwl Cd'
 runs:
   using: 'node12'
-  main: 'wrapper.cjs'
+  main: 'dist/index.cjs'
+
+inputs:
+  toolchains:
+    description: 'Comma seperated values of required toolchains'
+    required: false
+    default: 'gcc-arm'
