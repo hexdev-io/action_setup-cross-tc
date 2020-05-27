@@ -1,0 +1,23 @@
+{
+  "name": "@hexdev/ts-linting",
+  "version": "0.0.0",
+  "main": "index.js",
+  "bin": {
+    "eslint": "lint.js"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.0.0",
+    "@typescript-eslint/experimental-utils": "^3.0.0",
+    "@typescript-eslint/parser": "^3.0.0",
+    "eslint": "^7.1.0",
+    "esprint": "^0.7.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "peerDependencies": {
+    "typescript": "*"
+  }
+}

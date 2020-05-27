@@ -4,6 +4,7 @@
     "baseUrl": ".",
     "moduleResolution": "node",
     "target" : "esnext",
+    "esModuleInterop": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "types": [  "jest","node"],

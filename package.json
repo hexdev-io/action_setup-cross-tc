@@ -1,23 +1,18 @@
 {
   "name": "setup-cross-toolchain",
+  "private": true,
   "version": "0.2.0",
   "description": "Setup cross toolchain GitHub action",
   "main": "index.js",
   "scripts": {
     "start": "node  lib/index.js",
-    "lint": "xo --fix || true",
     "lint-tests": "xo --env=node --env=mocha --webpack=false src/**/*.test.ts",
-    "build": "webpack --env.production --config webpack.config.cjs",
-    "dev": "webpack --env.development --config webpack.config.cjs",
+    "build": "webpack --env.production --config webpack.config.js",
+    "dev": "webpack --mode development  --config webpack.config.js ",
     "roll": "rollup index.js --file dist/index.js",
     "check": "tsc --noEmit",
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js "
-  },
-  "jest": {
-    "testEnvironment": "jest-environment-node",
-    "roots": [
-      "./src"
-    ]
+    "lint": "eslint ./src",
+    "test": "yarn jest --config jest.config.js  "
   },
   "keywords": [
     "GitHub",
@@ -26,9 +21,13 @@
   ],
   "author": "Czwl Cd",
   "license": "MIT",
+  "workspaces": [
+    "linting/"
+  ],
   "dependencies": {
     "@actions/core": "^1.2.4",
     "@actions/tool-cache": "^1.5.5",
+    "@yarnpkg/pnpify": "^2.0.0-rc.22",
     "node-color-log": "^3.0.2",
     "tree-node-cli": "^1.3.0"
   },
@@ -37,18 +36,22 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-typescript": "^7.9.0",
     "@types/jest": "^25.2.3",
-    "@types/node": "^14.0.4",
+    "@types/node": "^14.0.5",
+    "@typescript-eslint/eslint-plugin": "^3.0.0",
+    "@typescript-eslint/experimental-utils": "^3.0.0",
+    "@typescript-eslint/parser": "^3.0.0",
     "babel-jest": "^26.0.1",
     "babel-loader": "^8.1.0",
-    "eslint": "^7.0.0",
+    "eslint": "^7.1.0",
+    "esprint": "^0.7.0",
     "jest": "^26.0.1",
     "jest-environment-node": "^26.0.1",
-    "rollup": "^2.10.5",
+    "pnp-webpack-plugin": "^1.6.4",
+    "rollup": "^2.10.8",
+    "supports-color": "^7.1.0",
     "ts-jest": "^26.0.0",
     "typescript": "^3.9.3",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-node-externals": "^1.7.2",
-    "xo": "^0.30.0"
+    "webpack": "next",
+    "webpack-cli": "beta"
   }
 }
